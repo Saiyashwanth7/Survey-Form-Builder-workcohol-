@@ -7,17 +7,12 @@ services:
     startCommand: >
       bash -c "
         python backend/manage.py migrate &&
-        python backend/manage.py shell -c \"
-          from django.contrib.auth import get_user_model;
-          User = get_user_model();
-          if not User.objects.filter(username='admin').exists():
-            User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')
-        \" &&
+        python backend/manage.py collectstatic --noinput &&
         gunicorn core.wsgi:application --chdir backend
       "
-
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: core.settings
       - key: PYTHON_VERSION
         value: 3.11
+    # Optionally, add database settings or other environment variables here
