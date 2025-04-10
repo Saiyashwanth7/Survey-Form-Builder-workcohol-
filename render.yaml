@@ -4,9 +4,13 @@ services:
     env: python
     plan: free
     buildCommand: "pip install -r backend/requirements.txt"
-    startCommand: |
-      bash -c "python backend/manage.py migrate &&
-               gunicorn core.wsgi:application --chdir backend"
+    startCommand: >
+     bash -c "
+     python backend/manage.py migrate &&
+     echo \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')\" | python backend/manage.py shell &&
+     gunicorn core.wsgi:application --chdir backend
+    "
+
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: core.settings
