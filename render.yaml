@@ -2,13 +2,13 @@ services:
   - type: web
     name: survey-backend
     env: python
-    buildCommand: "./venv/Scripts/activate && pip install -r backend/requirements.txt"
-    startCommand: "gunicorn core.wsgi:application --chdir backend"
+    plan: free
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: |
+      bash -c "python backend/manage.py migrate &&
+               gunicorn core.wsgi:application --chdir backend"
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: core.settings
       - key: PYTHON_VERSION
         value: 3.11
-    buildFilter:
-      paths:
-        - backend/**
