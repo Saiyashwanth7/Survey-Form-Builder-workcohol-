@@ -8,6 +8,7 @@ def index(request):
     
 urlpatterns = [
     path('/', index),
+    from django.http import JsonResponse
     path('admin/', admin.site.urls),
     path('api/users/', include('users.urls')),
     path('api/surveys/', include('surveys.urls')),
