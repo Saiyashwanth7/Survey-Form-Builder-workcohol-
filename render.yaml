@@ -5,14 +5,21 @@ services:
     plan: free
     buildCommand: "pip install -r backend/requirements.txt"
     startCommand: >
-     bash -c "
-     python backend/manage.py migrate &&
-     echo \"from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.filter(username='admin').exists() or User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')\" | python backend/manage.py shell &&
-     gunicorn core.wsgi:application --chdir backend
-    "
+      bash -c "
+        python backend/manage.py migrate &&
+        gunicorn core.wsgi:application --chdir backend
+      "
 
     envVars:
       - key: DJANGO_SETTINGS_MODULE
         value: core.settings
       - key: PYTHON_VERSION
         value: 3.11
+
+    # Optionally set other environment variables for your app, e.g., database or secret keys.
+    # - key: DATABASE_URL
+    #   value: "your-database-url"
+    # - key: SECRET_KEY
+    #   value: "your-secret-key"
+
+    # If you're using a database, you can configure that here as well (using the appropriate Render service).
