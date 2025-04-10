@@ -7,6 +7,12 @@ services:
     startCommand: >
       bash -c "
         python backend/manage.py migrate &&
+        python backend/manage.py shell -c \"
+          from django.contrib.auth import get_user_model;
+          User = get_user_model();
+          if not User.objects.filter(username='admin').exists():
+            User.objects.create_superuser('admin', 'admin@example.com', 'adminpass')
+        \" &&
         gunicorn core.wsgi:application --chdir backend
       "
 
@@ -15,11 +21,3 @@ services:
         value: core.settings
       - key: PYTHON_VERSION
         value: 3.11
-
-    # Optionally set other environment variables for your app, e.g., database or secret keys.
-    # - key: DATABASE_URL
-    #   value: "your-database-url"
-    # - key: SECRET_KEY
-    #   value: "your-secret-key"
-
-    # If you're using a database, you can configure that here as well (using the appropriate Render service).
